@@ -1,10 +1,22 @@
 import json
 
-file = open("tasks.json", "r", encoding="utf-8")
+try:
 
-tasks = json.load(file)
+    file = open("tasks.json", "r", encoding="utf-8")
 
-file.close()
+    tasks = json.load(file)
+
+    file.close()
+
+except FileNotFoundError:
+
+    tasks = []
+
+    file = open("tasks.json", "w", encoding="utf-8")
+
+    json.dump(tasks, file, ensure_ascii=False)
+
+    file.close()
 
 while True:
 
@@ -41,7 +53,16 @@ while True:
 
     elif choice == "3":
 
-        index = int(input("请输入删除任务编号："))
+        try:
+
+            index = int(input("请输入删除任务编号："))
+
+
+        except ValueError:
+
+            print("请输入数字")
+
+            continue
 
 
         if index >= 0 and index < len(tasks):
