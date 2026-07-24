@@ -1,19 +1,49 @@
 import json
+import os
+
+
+BASE_DIR = os.path.dirname(
+    os.path.dirname(__file__)
+)
+
+
+DATA_DIR = os.path.join(
+    BASE_DIR,
+    "data"
+)
+
+
+os.makedirs(DATA_DIR, exist_ok=True)
+
+
+FILE_PATH = os.path.join(
+    DATA_DIR,
+    "tasks.json"
+)
 
 
 class JsonStorage:
 
 
-    def __init__(self, filename):
+    def load(self):
 
-        self.filename = filename
+        if not os.path.exists(FILE_PATH):
+
+            return []
+
+        with open(
+            FILE_PATH,
+            "r",
+            encoding="utf-8"
+        ) as file:
+
+            return json.load(file)
 
 
 
     def save(self, tasks):
 
         data = []
-
 
         for task in tasks:
 
@@ -23,47 +53,23 @@ class JsonStorage:
                     "completed": task.completed
                 }
             )
-        print("保存路径:", self.filename)
 
 
-        file = open(
-            self.filename,
+        with open(
+            FILE_PATH,
             "w",
             encoding="utf-8"
-        )
+        ) as file:
 
-
-        json.dump(
-            data,
-            file,
-            ensure_ascii=False
-        )
-
-
-        file.close()
-
-
-
-    def load(self):
-
-        try:
-            print("读取路径:", self.filename)
-            file = open(
-                self.filename,
-                "r",
-                encoding="utf-8"
+            json.dump(
+                data,
+                file,
+                ensure_ascii=False,
+                indent=4
             )
 
 
-            data = json.load(file)
-
-
-            file.close()
-
-
-            return data
-
-
-        except FileNotFoundError:
-
-            return []
+        print(
+            "保存路径:",
+            FILE_PATH
+        )

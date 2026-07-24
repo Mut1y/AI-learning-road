@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# Logs
+logs/
+*.log
+
+# VS Code
+.vscode/
+
+# Data
+data/*.json
+python/task_manager_oop_v2/data/*.json

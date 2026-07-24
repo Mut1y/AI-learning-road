@@ -1,3 +1,5 @@
+from utils.logger import logger
+
 from models.task import Task
 
 
@@ -22,6 +24,8 @@ class TaskManager:
 
         self.storage.save(self.tasks)
 
+        logger.info(f"添加任务: {title}")
+
         print("添加成功")
 
 
@@ -45,6 +49,8 @@ class TaskManager:
 
         data = self.storage.load()
 
+        logger.info(f"加载任务数量: {len(data)}")
+
 
         for item in data:
 
@@ -58,14 +64,24 @@ class TaskManager:
 
         if index >= 0 and index < len(self.tasks):
 
-            removed = self.tasks.pop(index)
+            removed_task = self.tasks.pop(index)
 
             self.storage.save(self.tasks)
 
-            print("删除成功:", removed.title)
+            logger.info(
+                f"删除任务: {removed_task.title}"
+        )
 
+            print(
+                "删除成功：",
+                removed_task.title
+        )
 
         else:
+
+            logger.warning(
+                f"删除失败，不存在任务编号: {index}"
+        )
 
             print("任务不存在")
 
@@ -77,8 +93,16 @@ class TaskManager:
 
             self.storage.save(self.tasks)
 
+            logger.info(
+                f"完成任务: {self.tasks[index].title}"
+        )
+
             print("任务完成")
 
         else:
+
+            logger.warning(
+                f"完成任务失败，不存在编号: {index}"
+        )
 
             print("任务编号不存在")

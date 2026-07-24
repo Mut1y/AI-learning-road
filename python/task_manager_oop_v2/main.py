@@ -4,9 +4,7 @@ from storage.json_storage import JsonStorage
 
 
 
-storage = JsonStorage(
-    "data/tasks.json"
-)
+storage = JsonStorage()
 
 
 manager = TaskManager(storage)
