@@ -48,46 +48,59 @@ def ask_tool_ai(question):
 
     print("AI工具决策:")
     print(content)
-
     try:
         return json.loads(content.strip())
 
-    except Exception as e:
-
-        print("JSON解析失败:")
-        print(content)
+    except:
 
         return {
-            "tool":None
+        "name":None,
+        "arguments":None
     }
     
 
 
 def run_tool(tool_call):
 
-    tool_name = tool_call.get("tool")
+    print("真正进入run_tool")
+    tool_name = tool_call.get("name")
 
-    argument = tool_call.get("argument")
 
+    arguments = tool_call.get("arguments",{})
+
+    print("工具名称:")
+    print(tool_name)
+
+    print("参数:")
+    print(arguments)
 
     if tool_name not in TOOLS:
 
         return {
-            "错误":"不存在的工具"
+            "错误":"工具不存在"
         }
 
 
 
-    tool = TOOLS[tool_name]
+    function = TOOLS[tool_name]["function"]
 
-    function = tool["function"]
 
-    result = function(argument)
 
-    print("工具真实返回:")
-    print(result)
+    try:
 
-    return result
+        result = function(**arguments)
+        print("工具真实返回:")
+        print(result)
+        return result
+
+
+    except Exception as e:
+
+        return {
+
+            "错误":str(e)
+
+        }
 
 
 def summarize_tool_result(question, result):
@@ -134,10 +147,8 @@ def ask_ai(question):
 
     tool_call = ask_tool_ai(question)
 
-    print("最终工具选择:")
-    print(tool_call)
 
-    if tool_call.get("tool"):
+    if tool_call.get("name"):
 
         result = run_tool(tool_call)
 

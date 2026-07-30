@@ -42,6 +42,19 @@ def get_tools_description():
 
 你是一个工具选择器。
 
+你的任务：
+判断用户问题是否需要调用工具。
+
+规则：
+
+1. 如果存在匹配工具，必须调用工具。
+2. 不允许自己执行计算。
+3. 不允许自己回答GitHub查询。
+4. 只能返回JSON。
+5. 禁止输出解释。
+
+
+
 如果需要调用工具：
 
 只能返回JSON。
@@ -49,16 +62,26 @@ def get_tools_description():
 格式：
 
 {
-"tool":"工具名称",
-"argument":"参数"
+"name":"工具名称",
+
+"arguments":{
+
+"参数名":"参数值"
+
+}
+
 }
 
 
 如果不需要：
 
+返回：
+
 {
-"tool":null,
-"argument":null
+"name":null,
+
+"arguments":null
+
 }
 
 
@@ -76,6 +99,9 @@ def get_tools_description():
 
 功能:
 {tool["description"]}
+
+参数:
+{tool.get("parameters",{})}
 
 """
 
