@@ -5,13 +5,13 @@ def calculator_tool(expression):
         result = eval(expression)
 
         return {
-            "结果": result
+            "结果":result
         }
 
     except Exception as e:
 
         return {
-            "错误": str(e)
+            "错误":str(e)
         }
 
 
@@ -20,11 +20,18 @@ tool_info = {
 
     "name":"calculator_tool",
 
-    "description":"执行数学计算，需要提供expression参数",
+    "description":"执行数学计算",
 
     "parameters":{
 
-        "expression":"数学表达式"
+        "expression":{
+
+            "type":"string",
+
+            "description":
+            "数学表达式，例如123*456"
+
+        }
 
     },
 

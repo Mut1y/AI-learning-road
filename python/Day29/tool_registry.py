@@ -63,13 +63,11 @@ def get_tools_description():
 
 {
 "name":"工具名称",
-
 "arguments":{
 
 "参数名":"参数值"
 
 }
-
 }
 
 
@@ -101,9 +99,26 @@ def get_tools_description():
 {tool["description"]}
 
 参数:
-{tool.get("parameters",{})}
 
 """
 
+
+        for param,info in tool["parameters"].items():
+
+            text += f"""
+
+参数名:
+{param}
+
+类型:
+{info["type"]}
+
+说明:
+{info["description"]}
+
+"""
+
+
+        text += "\n"
 
     return text

@@ -26,11 +26,19 @@ tool_info = {
 
     "name":"github_tool",
 
-    "description":"查询GitHub用户信息",
+    "description":
+    "查询GitHub用户信息",
 
     "parameters":{
 
-        "username":"GitHub用户名"
+        "username":{
+
+            "type":"string",
+
+            "description":
+            "GitHub用户名，例如openai"
+
+        }
 
     },
 

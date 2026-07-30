@@ -62,17 +62,18 @@ def ask_tool_ai(question):
 
 def run_tool(tool_call):
 
-    print("真正进入run_tool")
     tool_name = tool_call.get("name")
 
+    arguments = tool_call.get("arguments", {})
 
-    arguments = tool_call.get("arguments",{})
 
+    print("真正进入run_tool")
     print("工具名称:")
     print(tool_name)
-
     print("参数:")
     print(arguments)
+
+
 
     if tool_name not in TOOLS:
 
@@ -85,25 +86,38 @@ def run_tool(tool_call):
     function = TOOLS[tool_name]["function"]
 
 
-
-    try:
-
-        result=function(**arguments)
-
-        print("工具真实返回:")
-        print(result)
-
-        return result
+    max_retry = 3
 
 
-    except Exception as e:
+    for i in range(max_retry):
 
-        return {
+        try:
 
-        "错误":
-        str(e)
+            result = function(**arguments)
 
-    }
+            print("工具真实返回:")
+            print(result)
+
+            return result
+
+
+        except Exception as e:
+
+
+            print(
+                f"工具执行失败，第{i+1}次"
+            )
+
+            print(e)
+
+
+
+            if i == max_retry-1:
+
+                return {
+                    "错误":
+                    f"工具执行失败:{str(e)}"
+                }
 
 
 def summarize_tool_result(question, result):
@@ -224,7 +238,8 @@ def ask_ai(question):
 
             {result}
 
-            请继续回答用户问题。
+            如果工具执行失败，请解释失败原因。
+            如果成功，请根据结果回答用户。
             """
             }
 
