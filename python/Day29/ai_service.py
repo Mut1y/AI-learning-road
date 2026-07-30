@@ -148,99 +148,90 @@ def summarize_tool_result(question, result):
 
 def ask_ai(question):
 
-    tool_call = ask_tool_ai(question)
 
-
-    if tool_call.get("name"):
-
-        result = run_tool(tool_call)
-
-
-        answer = summarize_tool_result(
-            question,
-            result
-    )
-
-
-        history.append(
-            {
-                "role":"user",
-                "content":question
-            }
-    )
-
-
-        history.append(
-            {
-            "role":"assistant",
-            "content":answer
-            }
-    )
-
-
-        save_memory(history)
-
-
-        return answer
-
-    
     messages=[
 
         {
             "role":"system",
-            "content":SYSTEM_PROMPT
+            "content":TOOLS_DESCRIPTION
+        },
+
+        {
+            "role":"user",
+            "content":question
         }
 
     ]
 
 
-    messages.extend(history)
+    while True:
 
 
-    messages.append(
+        response = client.chat.completions.create(
 
-        {
-            "role":"user",
-            "content":question
+            model="deepseek-chat",
+
+            temperature=0,
+
+            messages=messages
+
+        )
+
+
+        content=response.choices[0].message.content
+
+
+        print("AI思考:")
+        print(content)
+
+
+
+        try:
+
+            tool_call=json.loads(content)
+
+
+        except:
+
+
+            return content
+
+
+
+        if tool_call.get("name"):
+
+
+            result=run_tool(tool_call)
+
+
+            print("工具返回:")
+            print(result)
+
+            messages[0] = {
+
+            "role":"system",
+            "content":SYSTEM_PROMPT
+
         }
 
-    )
 
-
-    response = client.chat.completions.create(
-
-        model="deepseek-chat",
-
-        messages=messages
-
-    )
-
-
-    answer=response.choices[0].message.content
-
-
-
-    history.append(
+            messages.append(
 
         {
-            "role":"user",
-            "content":question
-        }
+                "role":"user",
+                "content":f"""
+            工具执行结果:
 
-    )
+            {result}
 
+            请继续回答用户问题。
+            """
+            }
 
-    history.append(
-
-        {
-            "role":"assistant",
-            "content":answer
-        }
-
-    )
+        )
 
 
-    save_memory(history)
+        else:
 
 
-    return answer
+            return content
