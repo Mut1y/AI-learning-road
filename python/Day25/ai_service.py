@@ -1,9 +1,9 @@
 from tool_schema import TOOLS_DESCRIPTION
 from memory import load_memory, save_memory
 from openai import OpenAI
-from prompt import SYSTEM_PROMPT
 from dotenv import load_dotenv
 from tool_registry import TOOLS
+from prompt import SYSTEM_PROMPT
 import os
 import json
 
@@ -45,34 +45,51 @@ def ask_tool_ai(question):
 
     content = response.choices[0].message.content
 
+    print("AI工具决策:")
+    print(content)
 
     try:
+        return json.loads(content.strip())
 
-        return json.loads(content)
+    except Exception as e:
 
-    except:
+        print("JSON解析失败:")
+        print(content)
 
         return {
             "tool":None
-        }
+    }
     
 
 
 def run_tool(tool_call):
 
+    tool_name = tool_call.get("tool")
 
-    tool_name = tool_call["tool"]
-
-    argument = tool_call["argument"]
-
-
-    tool = TOOLS[tool_name]
+    argument = tool_call.get("argument")
 
 
-    result = tool(argument)
+    if tool_name not in TOOLS:
+
+        return {
+            "错误":"不存在的工具"
+        }
 
 
-    return result
+    try:
+
+        tool = TOOLS[tool_name]
+
+        result = tool(argument)
+
+        return result
+
+
+    except Exception as e:
+
+        return {
+            "错误":str(e)
+        }
 
 
 def summarize_tool_result(question, result):
@@ -119,8 +136,10 @@ def ask_ai(question):
 
     tool_call = ask_tool_ai(question)
 
-    if tool_call.get("tool"):
+    print("最终工具选择:")
+    print(tool_call)
 
+    if tool_call.get("tool"):
 
         result = run_tool(tool_call)
 
@@ -128,7 +147,26 @@ def ask_ai(question):
         answer = summarize_tool_result(
             question,
             result
-        )
+    )
+
+
+        history.append(
+            {
+                "role":"user",
+                "content":question
+            }
+    )
+
+
+        history.append(
+            {
+            "role":"assistant",
+            "content":answer
+            }
+    )
+
+
+        save_memory(history)
 
 
         return answer
