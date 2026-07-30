@@ -1,12 +1,13 @@
-def github_tool(username):
+from github_api import get_user
 
-    from github_api import get_user
+
+
+def github_tool(username):
 
 
     try:
 
         result = get_user(username)
-
 
         return result
 
@@ -15,27 +16,23 @@ def github_tool(username):
 
         return {
 
-            "错误":str(e)
+            "错误": str(e)
 
         }
 
 
 
-tool_info={
-
+tool_info = {
 
     "name":"github_tool",
 
-
-    "description":"查询GitHub用户信息，需要username参数",
-
+    "description":"查询GitHub用户信息",
 
     "parameters":{
 
         "username":"GitHub用户名"
 
     },
-
 
     "function":github_tool
 

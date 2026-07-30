@@ -19,18 +19,26 @@ def get_user(username):
     if "login" not in data:
 
         return {
-            "错误": data.get("message","未知错误")
-        }
+
+        "错误":
+        data.get(
+            "message",
+            "查询失败"
+        )
+
+    }
+
 
 
     return {
 
-        "用户名": data["login"],
 
-        "主页": data["html_url"],
+    "用户名":data["login"],
 
-        "仓库数量": data["public_repos"],
+    "主页":data["html_url"],
 
-        "粉丝": data["followers"]
+    "仓库数量":data["public_repos"],
 
-    }
+    "粉丝":data["followers"]
+
+}

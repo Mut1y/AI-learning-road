@@ -88,9 +88,11 @@ def run_tool(tool_call):
 
     try:
 
-        result = function(**arguments)
+        result=function(**arguments)
+
         print("工具真实返回:")
         print(result)
+
         return result
 
 
@@ -98,9 +100,10 @@ def run_tool(tool_call):
 
         return {
 
-            "错误":str(e)
+        "错误":
+        str(e)
 
-        }
+    }
 
 
 def summarize_tool_result(question, result):
