@@ -21,10 +21,11 @@ history = load_memory()
 
 def ask_tool_ai(question):
 
-
     response = client.chat.completions.create(
 
         model="deepseek-chat",
+
+        temperature=0,
 
         messages=[
 
@@ -76,20 +77,17 @@ def run_tool(tool_call):
         }
 
 
-    try:
 
-        tool = TOOLS[tool_name]
+    tool = TOOLS[tool_name]
 
-        result = tool(argument)
+    function = tool["function"]
 
-        return result
+    result = function(argument)
 
+    print("工具真实返回:")
+    print(result)
 
-    except Exception as e:
-
-        return {
-            "错误":str(e)
-        }
+    return result
 
 
 def summarize_tool_result(question, result):
