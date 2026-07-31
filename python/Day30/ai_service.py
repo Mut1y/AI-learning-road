@@ -3,6 +3,8 @@ from memory import load_memory, save_memory
 from openai import OpenAI
 from dotenv import load_dotenv
 from tool_registry import TOOLS
+from agent_state import AgentState
+from state_memory import save_state
 from prompt import SYSTEM_PROMPT
 import os
 import json
@@ -162,24 +164,50 @@ def summarize_tool_result(question, result):
 
 def ask_ai(question):
 
+    state = AgentState()
+
+    state.question = question
 
     messages=[
 
-        {
-            "role":"system",
-            "content":TOOLS_DESCRIPTION
-        },
-
-        {
-            "role":"user",
-            "content":question
-        }
+    {
+        "role":"system",
+        "content":TOOLS_DESCRIPTION
+    }
 
     ]
+
+    messages.extend(history)
+
+
+    messages.append(
+
+    {
+        "role":"user",
+        "content":question
+    }
+
+)
+
+    state.update(
+        status="thinking",
+        question=question
+    )
+
+
+    state.show()
+
+    save_state(state)
+
+    print("当前工具提示:")
+    print(TOOLS_DESCRIPTION)
 
 
     while True:
 
+        state.status = "thinking"
+
+        state.show()
 
         response = client.chat.completions.create(
 
@@ -194,6 +222,13 @@ def ask_ai(question):
 
         content=response.choices[0].message.content
 
+        state.update(
+
+            action=content
+
+        )
+
+        state.show()
 
         print("AI思考:")
         print(content)
@@ -215,11 +250,40 @@ def ask_ai(question):
         if tool_call.get("name"):
 
 
+            state.update(
+
+            status="calling_tool",
+
+            tool=tool_call["name"],
+
+            arguments=tool_call["arguments"]
+
+    )
+
+            state.show()
+
+            save_state(state)
+
             result=run_tool(tool_call)
 
+            state.update(
 
-            print("工具返回:")
+            status="tool_finished",
+
+            observation=result
+
+        )
+
+
+            state.show()
+
+            save_state(state)
+
+
+            print("\n==========")
+            print("Observation")
             print(result)
+            print("==========")
 
             messages[0] = {
 
@@ -248,5 +312,31 @@ def ask_ai(question):
 
         else:
 
+
+            history.append(
+
+        {
+            "role":"user",
+            "content":question
+        }
+
+    )
+
+
+            history.append(
+
+        {
+            "role":"assistant",
+            "content":content
+        }
+
+    )
+
+
+            save_memory(history)
+
+            state.status="finished"
+
+            state.show()
 
             return content

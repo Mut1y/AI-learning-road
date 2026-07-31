@@ -1,0 +1,14 @@
+{
+    "status": "tool_finished",
+    "question": "查询github openai",
+    "tool": "github_tool",
+    "arguments": {
+        "username": "openai"
+    },
+    "observation": {
+        "用户名": "openai",
+        "主页": "https://github.com/openai",
+        "仓库数量": 267,
+        "粉丝": 128129
+    }
+}

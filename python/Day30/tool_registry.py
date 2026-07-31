@@ -57,7 +57,6 @@ def get_tools_description():
 
 如果需要调用工具：
 
-只能返回JSON。
 
 格式：
 
@@ -82,6 +81,12 @@ def get_tools_description():
 
 }
 
+注意：
+
+1. 工具名称必须来自下面列表。
+2. arguments必须填写工具需要的参数。
+3. 不允许遗漏参数。
+
 
 可用工具:
 
@@ -98,27 +103,31 @@ def get_tools_description():
 功能:
 {tool["description"]}
 
+调用格式:
+{{
+"name":"{name}",
+"arguments":{{...}}
+}}
+
+
 参数:
 
 """
 
 
-        for param,info in tool["parameters"].items():
+        if "parameters" in tool:
 
-            text += f"""
+            for p in tool["parameters"]:
 
-参数名:
-{param}
-
-类型:
-{info["type"]}
-
-说明:
-{info["description"]}
-
+                text += f"""
+- {p["name"]}: {p["description"]}
 """
 
+        else:
 
-        text += "\n"
+            text += """
+无
+"""
+
 
     return text
