@@ -1,7 +1,9 @@
+expected_password = input("请先设置练习密码：")
+
 while True:
     password = input("请输入密码： ")
 
-    if password == "123456":
+    if password == expected_password:
         print("登录成功")
         break
 
