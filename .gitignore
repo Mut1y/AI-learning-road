@@ -15,6 +15,9 @@ logs/
 # Data
 data/*.json
 python/task_manager_oop_v2/data/*.json
+agent_state.json
+tasks.json
+test.txt
 
 .env
 memory.json
